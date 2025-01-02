@@ -69,9 +69,6 @@ router.get("/", userAuth, async (req, res) => {
   }
 });
 
-
-
-
 // Add participant (Admin only)
 router.post("/", adminAuth, async (req, res) => {
   try {
