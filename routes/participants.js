@@ -1,3 +1,7 @@
+
+/**
+ * This is the entry of the backend code. Check readme.md file to see how to run db connection is automatic and will display a console message  when connection configuration is properly done from the env
+ */
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const Participant = require("../models/participant");
@@ -35,7 +39,7 @@ const userAuth = (req, res, next) => {
   }
 };
 
-// Get all participants
+// Get all participants and filter based on loggedin user role
 router.get("/", userAuth, async (req, res) => {
   try {
     const { role, name } = req.query;
@@ -69,7 +73,7 @@ router.get("/", userAuth, async (req, res) => {
   }
 });
 
-// Add participant (Admin only)
+// Add participant (supervisor only)
 router.post("/", adminAuth, async (req, res) => {
   try {
     const participant = new Participant(req.body);
@@ -85,24 +89,7 @@ router.post("/", adminAuth, async (req, res) => {
   }
 });
 
-// Add episode data to a participant (Admin only)
-// router.post('/:id/episodes', adminAuth, async (req, res) => {
-//     try {
-//         const participant = await Participant.findById(req.params.id);
-//         if (!participant) {
-//             return res.status(404).send({ success: false, error: "Perticipant not found" });
-//         }
-//         const { FINAL_STRESS, INITIAL_STRESS } = req.body;
-//         participant.episodes.push({ FINAL_STRESS, INITIAL_STRESS });
-//         await participant.save();
-//         res.send({ success: true, data: participant, message: "participant updated succesfully" });
-//     } catch (error) {
-//         console.error(error)
-//         res.status(400).send({ success: false, error });
-//     }
-// });
-
-// Add or update the episode object for a participant (Admin only)
+// Add or update the episode object for a participant (supervisor only)
 router.post("/:id/episode", adminAuth, async (req, res) => {
   try {
     const participant = await Participant.findById(req.params.id);
@@ -129,7 +116,7 @@ router.post("/:id/episode", adminAuth, async (req, res) => {
   }
 });
 
-// Add comment to a participant (Admin only)
+// Add comment to a participant (supervisor only)
 router.post("/:id/comment", adminAuth, async (req, res) => {
   if (!req.body.comment)
     return res
@@ -157,7 +144,7 @@ router.post("/:id/comment", adminAuth, async (req, res) => {
       .send({ success: false, error: "Error: could not add comment" });
   }
 });
-// get comments a participant (User only)
+// get comments a participant
 router.get("/:id/comment", userAuth, async (req, res) => {
   try {
     const participant = await Participant.findById(req.params.id);
@@ -180,7 +167,7 @@ router.get("/:id/comment", userAuth, async (req, res) => {
   }
 });
 
-// Add episode data to a participant (Admin only)
+// get  a participant (supervisor only)
 router.get("/:id", adminAuth, async (req, res) => {
   try {
     const participant = await Participant.findById(req.params.id);
@@ -200,7 +187,7 @@ router.get("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Add episode data to a participant (Admin only)
+// delete  participant (supervisor only)
 router.delete("/:id", adminAuth, async (req, res) => {
   try {
     const participant = await Participant.findByIdAndDelete(req.params.id);
@@ -212,53 +199,7 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// // Delete a specific episode of a participant (Admin only)
-// router.delete('/:participantId/episodes/:episodeIndex', adminAuth, async (req, res) => {
-//     try {
-//         const participant = await Participant.findById(req.params.participantId);
-//         if (!participant) {
-//             return res.status(404).send({ success: false, error: 'Participant not found' });
-//         }
-
-//         const episodeIndex = parseInt(req.params.episodeIndex) - 1; // Convert to zero-based index
-//         if (episodeIndex < 0 || episodeIndex >= participant.episodes.length) {
-//             return res.status(404).send({ success: false, error: 'Episode not found' });
-//         }
-
-//         participant.episodes.splice(episodeIndex, 1);
-//         await participant.save();
-//         res.send({ success: true, message: 'Episode deleted successfully' });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(400).send({ success: false, error });
-//     }
-// });
-
-// // Edit a specific episode of a participant (Admin only)
-// router.patch('/:participantId/episodes/:episodeIndex', adminAuth, async (req, res) => {
-//     try {
-//         const participant = await Participant.findById(req.params.participantId);
-//         if (!participant) {
-//             return res.status(404).send({ success: false, error: 'Participant not found' });
-//         }
-
-//         const episodeIndex = parseInt(req.params.episodeIndex) - 1; // Convert to zero-based index
-//         if (episodeIndex < 0 || episodeIndex >= participant.episodes.length) {
-//             return res.status(404).send({ success: false, error: 'Episode not found' });
-//         }
-
-//         const { INITIAL_STRESS, FINAL_STRESS } = req.body;
-//         if (INITIAL_STRESS) participant.episodes[episodeIndex].INITIAL_STRESS = INITIAL_STRESS;
-//         if (FINAL_STRESS) participant.episodes[episodeIndex].FINAL_STRESS = FINAL_STRESS;
-
-//         await participant.save();
-//         res.send({ success: true, data: participant, message: 'Episode updated successfully' });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(400).send({ success: false, error });
-//     }
-// });
-
+// delete episode data of a participant (Supervisor only)
 router.delete("/:participantId/episode", adminAuth, async (req, res) => {
   try {
     const participant = await Participant.findById(req.params.participantId);
@@ -276,24 +217,6 @@ router.delete("/:participantId/episode", adminAuth, async (req, res) => {
     res.status(400).send({ success: false, error });
   }
 });
-
-// router.delete("/:participantId/episode", adminAuth, async (req, res) => {
-//   try {
-//     const participant = await Participant.findById(req.params.participantId);
-//     if (!participant) {
-//       return res
-//         .status(404)
-//         .send({ success: false, error: "Participant not found" });
-//     }
-
-//     participant.episodes = undefined; // Remove the episode object
-//     await participant.save();
-//     res.send({ success: true, message: "Episode deleted successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).send({ success: false, error });
-//   }
-// });
 
 // Edit the episode object of a participant (Admin only)
 router.patch("/:participantId/episode", adminAuth, async (req, res) => {

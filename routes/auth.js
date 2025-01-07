@@ -1,3 +1,7 @@
+/**
+ * This controls authentication. for now we have just three auth, login, logout and
+ */
+
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -37,6 +41,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//logout
 router.post("/logout", async (req, res) => {
   try {
     // On the server side, we can suggest the client delete the token

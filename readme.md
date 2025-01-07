@@ -1,8 +1,14 @@
 ## API Endpoints
 
-This document outlines the available API endpoints, their expected Bodys, and the expected Returnss.
+This document outlines the available API endpoints, their expected Bodys, and the expected Returns.
 
-#### Base Url: `https://stresslysis.onrender.com`
+- to start application on local server
+
+#### yarn dev
+
+#### npm run dev
+
+#### Base Url: `https://neurotrackapi.onrender.com`
 
 ### User Registration
 
@@ -69,7 +75,6 @@ This document outlines the available API endpoints, their expected Bodys, and th
   - Error: Status 404 if participant not found, Status 401 for unauthorized access, Status 400 for other errors
 - **Description**: Adds episode data to an existing participant. Requires supervisor privileges.
 
-
 ### Get Comment on Participant (Supervisor Only)
 
 - **Endpoint**: `/api/participants/:id/comment`
@@ -80,7 +85,6 @@ This document outlines the available API endpoints, their expected Bodys, and th
   - Success: Status 200 with updated participant details
   - Error: Status 404 if participant not found, Status 401 for unauthorized access, Status 400 for other errors
 - **Description**: Adds episode data to an existing participant. Requires supervisor privileges.
-
 
 ## Get All Participants
 
@@ -102,15 +106,12 @@ This document outlines the available API endpoints, their expected Bodys, and th
     {
       "_id": "5f50c31f1234567890abcdef",
       "name": "Participant One",
-      "episodes": [
-        { "STAI": 8, "NASA": 31 },
-        { "STAI": 9, "NASA": 30 }
-      ]
+      "episodes": { "initial": 8, "final": 31 }
     },
     {
       "_id": "5f50c31f1234567890fedcba",
       "name": "Participant Two",
-      "episodes": [{ "STAI": 7, "NASA": 32 }]
+      "episodes": { "initial": 7, "final": 32 }
     }
     // ... more participants
   ]
@@ -134,14 +135,11 @@ This document outlines the available API endpoints, their expected Bodys, and th
 {
   "success": true,
   "data": {
-      "_id": "5f50c31f1234567890abcdef",
-      "name": "Participant One",
-      "episodes": [
-        { "STAI": 8, "NASA": 31 },
-        { "STAI": 9, "NASA": 30 }
-      ]
-    },
-    "message": "participan found"
+    "_id": "5f50c31f1234567890abcdef",
+    "name": "Participant One",
+    "episodes": { "initial": 8, "final": 31 }
+  },
+  "message": "participan found"
 }
 ```
 
@@ -161,7 +159,7 @@ This document outlines the available API endpoints, their expected Bodys, and th
 ```json
 {
   "success": true,
-    "message": "participan deleted"
+  "message": "participan deleted"
 }
 ```
 
@@ -181,7 +179,7 @@ This document outlines the available API endpoints, their expected Bodys, and th
 ```json
 {
   "success": true,
-    "message": "Episode deleted successfully"
+  "message": "Episode deleted successfully"
 }
 ```
 
@@ -192,8 +190,8 @@ This document outlines the available API endpoints, their expected Bodys, and th
 - **Header**:
   - `Authorization`: Bearer Token (JWT)
 - **Body**:
-  - `STAI`: Number (Optional)
-  - `NASA`: Number (Optional)
+  - `initial`: Number (Optional)
+  - `final`: Number (Optional)
 - **Returns**:
   - Success: Status 200 with a message.
   - Error: Status 401 for unauthorized access, Status 400 for other errors
@@ -204,6 +202,6 @@ This document outlines the available API endpoints, their expected Bodys, and th
 ```json
 {
   "success": true,
-    "message": "Episode deleted successfully"
+  "message": "Episode deleted successfully"
 }
 ```
